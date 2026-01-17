@@ -577,15 +577,41 @@ export default defineAgent({
         }),
       });
 
+      // Wait for a participant to join before starting the session
+      console.log("[Agent] Waiting for participant to join...");
+      const participant = await ctx.waitForParticipant();
+      console.log(`[Agent] Participant joined: ${participant.identity}`);
+
       console.log("[Agent] Starting session...");
       await session.start({
         agent: new DynamicAgent(),
         room: ctx.room,
       });
 
-      console.log(`[Agent] Session started, sending greeting: "${config.agentConfig.greeting}"`);
-      // Send the greeting immediately using TTS
-      await session.say(config.agentConfig.greeting);
+      // Add a small delay to ensure TTS is fully initialized
+      console.log("[Agent] Waiting for TTS to initialize...");
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      console.log(`[Agent] Sending greeting: "${config.agentConfig.greeting}"`);
+
+      // Send greeting with error handling and fallback
+      try {
+        await session.say(config.agentConfig.greeting);
+        console.log("[Agent] Greeting sent successfully via say()");
+      } catch (sayError) {
+        console.error('[Agent] session.say() failed:', sayError);
+        console.log("[Agent] Attempting fallback with generate_reply...");
+        try {
+          // Fallback: use generate_reply which may be more robust
+          await (session as any).generate_reply({
+            instructions: `Say exactly this greeting to the caller: "${config.agentConfig.greeting}"`
+          });
+          console.log("[Agent] Greeting sent via generate_reply fallback");
+        } catch (fallbackError) {
+          console.error('[Agent] generate_reply fallback also failed:', fallbackError);
+        }
+      }
+
       console.log("[Agent] Agent ready!");
     } catch (error) {
       console.error("[Agent] Fatal error in entry:", error);
