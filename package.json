@@ -1,0 +1,38 @@
+{
+  "name": "agent",
+  "version": "1.0.0",
+  "description": "LiveKit Voice Agent for dental practice appointment booking",
+  "type": "module",
+  "main": "agent.js",
+  "scripts": {
+    "dev": "tsx agent.ts dev",
+    "build": "tsc",
+    "start": "node agent.js start",
+    "download-files": "tsc && node agent.js download-files"
+  },
+  "keywords": [
+    "livekit",
+    "voice-agent",
+    "dental"
+  ],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.9.0",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@livekit/agents": "^1.0.35",
+    "@livekit/agents-plugin-deepgram": "^1.0.35",
+    "@livekit/agents-plugin-elevenlabs": "^1.0.35",
+    "@livekit/agents-plugin-google": "^1.0.35",
+    "@livekit/agents-plugin-silero": "^1.0.35",
+    "@supabase/supabase-js": "^2.90.1",
+    "dotenv": "^17.2.3",
+    "zod": "^4.3.5"
+  }
+}
